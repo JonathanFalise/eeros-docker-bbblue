@@ -28,10 +28,14 @@ public:
 
 private:
     // Define all critical outputs
-    //eeros::hal::Output<bool>1 ;
+    eeros::hal::Output<bool>* ledUser0;
+    eeros::hal::Output<bool>* ledUser1;
+    eeros::hal::Output<bool>* ledUser2;
+    eeros::hal::Output<bool>* ledUser3;
 
     // Define all critical inputs
-    // eeros::hal::Input<bool>* ...;
+    eeros::hal::Input<bool>* btnPause;
+    eeros::hal::Input<bool>* btnMode;
 
     ControlSystem &cs;
 };
