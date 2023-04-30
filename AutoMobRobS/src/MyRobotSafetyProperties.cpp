@@ -10,7 +10,8 @@ MyRobotSafetyProperties::MyRobotSafetyProperties(ControlSystem &cs, double dt)
       slSystemOn("System is online"),
       slMoving("System is Moving"),
 
-      doSystemOff("Shutdown the system"),
+      doSystemOff("Power off the system"),
+      doShuttingDown("Shutting down the system")
       doSystemStartingUp("Starting up the system"),
       doEmerency("Emerengy Detected"),
       doEmerencyResolved("Emerengy cleared"),
@@ -38,15 +39,25 @@ MyRobotSafetyProperties::MyRobotSafetyProperties(ControlSystem &cs, double dt)
     addLevel(slMoving);
 
     // Add events to individual safety levels
-    slSystemOff.addEvent(doSystemOn, slSystemStartingUp, kPublicEvent);
-    slSystemOn.addEvent(doSystemOff, slSystemOff, kPublicEvent);
-    slSystemStartingUp.addEvent(doStartingUp, kPublicEvent);
+    slSystemOff.addEvent(doSystemStartingUp, slSystemStartingUp, kPublicEvent);
+    slShuttingDown.addEvent(doSystemOff, slSystemOff, kPublicEvent);
+    slSystemStartingUp.addEvent(doSystemOn, slSystemOn, kPublicEvent);
+    slSystemStartingUp.addEvent(doEmergency, slEmergency, kPublicEvent);
+    slSystemOn.addEvent(doStartMoving, slMoving, kPublicEvent);
+    
 
     // Add events to multiple safety levels
-    // addEventToAllLevelsBetween(lowerLevel, upperLevel, event, targetLevel, kPublicEvent/kPrivateEvent);
+    addEventToAllLevelsBetween(slSystemOn, slMoving, doEmergency, slEmergency, kPublicEvent);
+    addEventToAllLevelsBetween(slEmergency, slMoving, doShuttingDown, slShuttingDown, kPublicEvent);
 
     // Define input actions for all levels
-    // level.setInputActions({ ... });
+    slSystemOff.setInputActions({ignore(btnPause), ignore(btnMode) });
+    slShuttingDown.setInputActions({ignore(btnPause), ignore(btnMode) });
+    slSystemStartingUp.setInputActions({ignore(btnPause), check(btnMode, true, doEmergency) }); //goes to slEmergency
+    slSystemOn.setInputActions({ignore(btnPause), check(btnMode, true, doEmergency) }); //goes to slEmergency
+    slMoving.setInputActions({check(btnPause, true, doShuttingDown), check(btnMode, true, doEmergency) }); //goes to slEmergency
+    slEmergency.setInputActions({check(btnPause, true, doEmergencyResolved), ignore(btnPause)});
+    slSystemOn.setInputActions({check(btnPause, true, doStartMoving), ignore(btnPause)});
 
     // Define output actions for all levels
     // level.setOutputActions({ ... });
