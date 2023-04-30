@@ -11,16 +11,24 @@ public:
     MyRobotSafetyProperties(ControlSystem &cs, double dt);
 
     // Define all possible events
-    eeros::safety::SafetyEvent doSystemOff;
-    eeros::safety::SafetyEvent doSystemOn;
+    eeros::safety::SafetyEvent doSystemOff;// bring robot to sl0
+    eeros::safety::SafetyEvent doSystemStartingUp;// from sl0 boots to sl2
+    eeros::safety::SafetyEvent doEmerency;// from any safety lvl puts robot to sl3
+    eeros::safety::SafetyEvent doEmerencyResolved;// from sl3 puts robot to sl4 (slSystemOn)
+    eeros::safety::SafetyEvent doSystemOn;// from sl2 to sl4 (slSystemOn)
+    eeros::safety::SafetyEvent doStartMoving;// from sl4 puts robot to sl5 (slMoving)
 
     // Defina all possible levels
     eeros::safety::SafetyLevel slSystemOff;
+    eeros::safety::SafetyLevel slShuttingDown;
+    eeros::safety::SafetyLevel slSystemStartingUp;
+    eeros::safety::SafetyLevel slEmergency;
     eeros::safety::SafetyLevel slSystemOn;
+    eeros::safety::SafetyLevel slMoving;
 
 private:
     // Define all critical outputs
-    // eeros::hal::Output<bool>* ...;
+    //eeros::hal::Output<bool>1 ;
 
     // Define all critical inputs
     // eeros::hal::Input<bool>* ...;
