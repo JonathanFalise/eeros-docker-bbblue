@@ -19,7 +19,7 @@ public:
     // Define Blocks
     Constant<> myConstant;
     Gain<> myGain;
-    PeripheralInput<> servoEnvoder;
+    PeripheralInput<> servoEncoder;
     Controller<> controller;
     PeripheralOutput<> servoMotor;
 

@@ -9,14 +9,14 @@ ControlSystem::ControlSystem(double dt)
     // Name all blocks
     myConstant.setName("My constant");
     myGain.setName("My gain");
-    servoEnvoder.setName("Servo Encoder");
+    servoEncoder.setName("Servo Encoder");
     servoMotor.setName("Servo Motor");
     controller.setName("Controller");
 
     // Name all signals
     myConstant.getOut().getSignal().setName("My constant value");
     myGain.getOut().getSignal().setName("My constant value multiplied with my gain");
-    servoEncoder.getOut().getsignal().setName("phi [rad]");
+    servoEncoder.getOut().getSignal().setName("phi [rad]");
     controller.getOut().getSignal().setName("U [V]");
 
     // Connect signals

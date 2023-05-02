@@ -14,7 +14,7 @@ MyRobotSafetyProperties::MyRobotSafetyProperties(ControlSystem &cs, double dt)
       doShuttingDown("Shutting down the system"),
       doSystemStartingUp("Starting up the system"),
       doEmergency("Emerengy Detected"),
-      doEmerencyResolved("Emerengy cleared"),
+      doEmergencyResolved("Emerengy cleared"),
       doSystemOn("Startup the system"),
       doStartMoving("System is starting to move")
 {
@@ -61,11 +61,11 @@ MyRobotSafetyProperties::MyRobotSafetyProperties(ControlSystem &cs, double dt)
 
     // Define output actions for all levels
     slSystemOff.setOutputActions   (    { set(ledUser0, false), set(ledUser1, false), set(ledUser2, false), set(ledUser3, false)});
-    slShuttingDown.setOutputActions(    { set(ledUser0, true), set(ledUser1, false), set(ledUser2, false), set(ledUser3, false)});
-    slSystemStartingUp.setOutputActions({ set(ledUser0, false), set(ledUser1, false), set(ledUser2, false), set(ledUser3, true)});
-    slEmergency.setOutputActions(       { set(ledUser0, true), set(ledUser1, true), set(ledUser2, true), set(ledUser3, true)});
-    slSystemOn.setOutputActions(        { set(ledUser0, false), set(ledUser1, true), set(ledUser2, true), set(ledUser3, false)});
-    slMoving.setOutputActions(          { set(ledUser0, true), set(ledUser1, false), set(ledUser2, false), set(ledUser3, true)});
+    slShuttingDown.setOutputActions(    { set(ledUser0, true),  set(ledUser1, false), set(ledUser2, false), set(ledUser3, false)});
+    slSystemStartingUp.setOutputActions({ set(ledUser0, false), set(ledUser1, false), set(ledUser2, false), set(ledUser3, true) });
+    slEmergency.setOutputActions(       { set(ledUser0, true),  set(ledUser1, true),  set(ledUser2, true),  set(ledUser3, true) });
+    slSystemOn.setOutputActions(        { set(ledUser0, false), set(ledUser1, true),  set(ledUser2, true),  set(ledUser3, false)});
+    slMoving.setOutputActions(          { set(ledUser0, true),  set(ledUser1, false), set(ledUser2, false), set(ledUser3, true) });
 
     // Define and add level actions
     slSystemOff.setLevelAction([&](SafetyContext *privateContext) {
@@ -73,27 +73,27 @@ MyRobotSafetyProperties::MyRobotSafetyProperties(ControlSystem &cs, double dt)
         eeros::Executor::stop();
     });
 
-    slShuttingDown.setLevelAction([&](SafetyContext *privateContext)[
-        controlSystem.timedomain.stop();
-		privatecontext->triggerEvent(doShuttingDown);
-    ]);
+    slShuttingDown.setLevelAction([&](SafetyContext *privateContext){
+        cs.timedomain.stop();
+		privateContext->triggerEvent(doShuttingDown);
+    });
     
-    slSystemStartingUp.setLevelAction([&](SafetyContext *privateContext)[
-        privateContext->triggerEvent(doStartingUp);
-    ]);
+    slSystemStartingUp.setLevelAction([&](SafetyContext *privateContext){
+        privateContext->triggerEvent(doSystemStartingUp);
+    });
 
-    slEmergency.setLevelAction([&](SafetyContext *privateContext)[
+    slEmergency.setLevelAction([&](SafetyContext *privateContext){
         //Nothing to write here, no event base action
-    ]);
+    });
 
     slSystemOn.setLevelAction([&](SafetyContext *privateContext) {
         cs.timedomain.start();
-        context->triggerEvent(doStartMoving);
+        privateContext->triggerEvent(doStartMoving);
     });
 
-    slMoving.setLevelAction([&](SafetyContext *privateContext)[
+    slMoving.setLevelAction([&](SafetyContext *privateContext){
         //TODO implement moving
-    ]);
+    });
 
     // Define entry level
     setEntryLevel(slSystemOff);
