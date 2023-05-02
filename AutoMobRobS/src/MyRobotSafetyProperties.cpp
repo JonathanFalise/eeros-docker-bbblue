@@ -60,7 +60,12 @@ MyRobotSafetyProperties::MyRobotSafetyProperties(ControlSystem &cs, double dt)
     slSystemOn.setInputActions({check(btnPause, true, doStartMoving), ignore(btnPause)});
 
     // Define output actions for all levels
-    // level.setOutputActions({ ... });
+    slSystemOff.setOutputActions   (    { set(ledUser0, false), set(ledUser1, false), set(ledUser2, false), set(ledUser3, false)});
+    slShuttingDown.setOutputActions(    { set(ledUser0, true), set(ledUser1, false), set(ledUser2, false), set(ledUser3, false)});
+    slSystemStartingUp.setOutputActions({ set(ledUser0, false), set(ledUser1, false), set(ledUser2, false), set(ledUser3, true)});
+    slEmergency.setOutputActions(       { set(ledUser0, true), set(ledUser1, true), set(ledUser2, true), set(ledUser3, true)});
+    slSystemOn.setOutputActions(        { set(ledUser0, false), set(ledUser1, true), set(ledUser2, true), set(ledUser3, false)});
+    slMoving.setOutputActions(          { set(ledUser0, true), set(ledUser1, false), set(ledUser2, false), set(ledUser3, true)});
 
     // Define and add level actions
     slSystemOff.setLevelAction([&](SafetyContext *privateContext) {
@@ -68,9 +73,27 @@ MyRobotSafetyProperties::MyRobotSafetyProperties(ControlSystem &cs, double dt)
         eeros::Executor::stop();
     });
 
+    slShuttingDown.setLevelAction([&](SafetyContext *privateContext)[
+        controlSystem.timedomain.stop();
+		privatecontext->triggerEvent(doShuttingDown);
+    ]);
+    
+    slSystemStartingUp.setLevelAction([&](SafetyContext *privateContext)[
+        privateContext->triggerEvent(doStartingUp);
+    ]);
+
+    slEmergency.setLevelAction([&](SafetyContext *privateContext)[
+        //Nothing to write here, no event base action
+    ]);
+
     slSystemOn.setLevelAction([&](SafetyContext *privateContext) {
         cs.timedomain.start();
+        context->triggerEvent(doStartMoving);
     });
+
+    slMoving.setLevelAction([&](SafetyContext *privateContext)[
+        //TODO implement moving
+    ]);
 
     // Define entry level
     setEntryLevel(slSystemOff);

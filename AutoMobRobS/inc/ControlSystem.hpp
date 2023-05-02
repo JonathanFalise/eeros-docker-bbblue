@@ -5,6 +5,9 @@
 #include <eeros/core/Executor.hpp>
 #include <eeros/control/Constant.hpp>
 #include <eeros/control/Gain.hpp>
+#include <eeros/control/PeripheralInput.hpp>
+#include <eeros/control/PeripheralOutput.hpp>
+//#include "customBlocks/Controller.hpp"
 
 using namespace eeros::control;
 
@@ -16,6 +19,9 @@ public:
     // Define Blocks
     Constant<> myConstant;
     Gain<> myGain;
+    PeripheralInput<> servoEnvoder;
+    //Controller<> controller;
+    PeripheralOutput<> servoMotor;
 
     TimeDomain timedomain;
 };
