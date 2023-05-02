@@ -11,9 +11,9 @@ MyRobotSafetyProperties::MyRobotSafetyProperties(ControlSystem &cs, double dt)
       slMoving("System is Moving"),
 
       doSystemOff("Power off the system"),
-      doShuttingDown("Shutting down the system")
+      doShuttingDown("Shutting down the system"),
       doSystemStartingUp("Starting up the system"),
-      doEmerency("Emerengy Detected"),
+      doEmergency("Emerengy Detected"),
       doEmerencyResolved("Emerengy cleared"),
       doSystemOn("Startup the system"),
       doStartMoving("System is starting to move")

@@ -12,6 +12,7 @@ public:
 
     // Define all possible events
     eeros::safety::SafetyEvent doSystemOff;// bring robot to sl0
+    eeros::safety::SafetyEvent doShuttingDown;// from any state to sl1 (slShuttingDown)
     eeros::safety::SafetyEvent doSystemStartingUp;// from sl0 boots to sl2
     eeros::safety::SafetyEvent doEmerency;// from any safety lvl puts robot to sl3
     eeros::safety::SafetyEvent doEmerencyResolved;// from sl3 puts robot to sl4 (slSystemOn)

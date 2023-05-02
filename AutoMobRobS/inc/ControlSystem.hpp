@@ -7,7 +7,7 @@
 #include <eeros/control/Gain.hpp>
 #include <eeros/control/PeripheralInput.hpp>
 #include <eeros/control/PeripheralOutput.hpp>
-//#include "customBlocks/Controller.hpp"
+#include "customBlocks/Controller.hpp"
 
 using namespace eeros::control;
 
@@ -20,7 +20,7 @@ public:
     Constant<> myConstant;
     Gain<> myGain;
     PeripheralInput<> servoEnvoder;
-    //Controller<> controller;
+    Controller<> controller;
     PeripheralOutput<> servoMotor;
 
     TimeDomain timedomain;

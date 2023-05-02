@@ -2,8 +2,8 @@
 
 ControlSystem::ControlSystem(double dt)
     : myConstant(1.0), myGain(2.0),
-      servoEnvoder("enc1"),
-      servoMotor("motor1"),
+      servoEncoder("Serv_enc1"),
+      servoMotor("ServMotor1"),
       timedomain("Main time domain", dt, true)
 {
     // Name all blocks
@@ -16,8 +16,8 @@ ControlSystem::ControlSystem(double dt)
     // Name all signals
     myConstant.getOut().getSignal().setName("My constant value");
     myGain.getOut().getSignal().setName("My constant value multiplied with my gain");
-    servoEncoder.getOut().getsignal().setName("phi [rad]")
-    controller.getOut().getSignal().setName("U [V]")
+    servoEncoder.getOut().getsignal().setName("phi [rad]");
+    controller.getOut().getSignal().setName("U [V]");
 
     // Connect signals
     myGain.getIn().connect(myConstant.getOut());
