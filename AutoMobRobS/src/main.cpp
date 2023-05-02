@@ -44,7 +44,7 @@ int main(int argc, char **argv)
     log.info() << "Initializing executor...";
     auto &executor = eeros::Executor::instance();
     executor.setMainTask(ss);
-    ss.triggerEvent(sp.doSystemOn);
+    ss.triggerEvent(sp.doSystemStartingUp);
     executor.run();
 
     mainSequence.wait();

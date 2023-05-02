@@ -20,15 +20,24 @@ MyRobotSafetyProperties::MyRobotSafetyProperties(ControlSystem &cs, double dt)
 {
     eeros::hal::HAL &hal = eeros::hal::HAL::instance();
 
-    // Declare and add critical outputs
+    // Declare and add critical inputs and outputs
     // ... = hal.getLogicOutput("...");
+    ledUser0 = hal.getLogicOutput("onBoardLEDuser0");
+    ledUser1 = hal.getLogicOutput("onBoardLEDuser1");
+    ledUser2 = hal.getLogicOutput("onBoardLEDuser2");
+    ledUser3 = hal.getLogicOutput("onBoardLEDuser3");
 
     // criticalOutputs = { ... };
+    criticalOutputs = {ledUser0, ledUser1, ledUser2, ledUser3  };
 
     // Declare and add critical inputs
     // ... = eeros::hal::HAL::instance().getLogicInput("...", ...);
+    btnPause = hal.getLogicInput("onBoardButtonPause");
+    btnMode = hal.getLogicInput("onBoardButtonMode");
 
-    // criticalInputs = { ... };
+    criticalInputs = { btnPause, btnMode};
+
+
 
     // Add all safety levels to the safety system
     addLevel(slSystemOff);
@@ -43,6 +52,7 @@ MyRobotSafetyProperties::MyRobotSafetyProperties(ControlSystem &cs, double dt)
     slShuttingDown.addEvent(doSystemOff, slSystemOff, kPublicEvent);
     slSystemStartingUp.addEvent(doSystemOn, slSystemOn, kPublicEvent);
     slSystemStartingUp.addEvent(doEmergency, slEmergency, kPublicEvent);
+    slEmergency.addEvent(doEmergencyResolved, slSystemOn, kPublicEvent);
     slSystemOn.addEvent(doStartMoving, slMoving, kPublicEvent);
     
 
@@ -54,10 +64,9 @@ MyRobotSafetyProperties::MyRobotSafetyProperties(ControlSystem &cs, double dt)
     slSystemOff.setInputActions({ignore(btnPause), ignore(btnMode) });
     slShuttingDown.setInputActions({ignore(btnPause), ignore(btnMode) });
     slSystemStartingUp.setInputActions({ignore(btnPause), check(btnMode, true, doEmergency) }); //goes to slEmergency
-    slSystemOn.setInputActions({ignore(btnPause), check(btnMode, true, doEmergency) }); //goes to slEmergency
+    slSystemOn.setInputActions({check(btnPause, true, doStartMoving), check(btnMode, true, doEmergency) }); //goes to slEmergency
     slMoving.setInputActions({check(btnPause, true, doShuttingDown), check(btnMode, true, doEmergency) }); //goes to slEmergency
-    slEmergency.setInputActions({check(btnPause, true, doEmergencyResolved), ignore(btnPause)});
-    slSystemOn.setInputActions({check(btnPause, true, doStartMoving), ignore(btnPause)});
+    slEmergency.setInputActions({check(btnPause, true, doEmergencyResolved), ignore(btnMode)});
 
     // Define output actions for all levels
     slSystemOff.setOutputActions   (    { set(ledUser0, false), set(ledUser1, false), set(ledUser2, false), set(ledUser3, false)});
@@ -75,11 +84,11 @@ MyRobotSafetyProperties::MyRobotSafetyProperties(ControlSystem &cs, double dt)
 
     slShuttingDown.setLevelAction([&](SafetyContext *privateContext){
         cs.timedomain.stop();
-		privateContext->triggerEvent(doShuttingDown);
+		privateContext->triggerEvent(doSystemOff);
     });
     
     slSystemStartingUp.setLevelAction([&](SafetyContext *privateContext){
-        privateContext->triggerEvent(doSystemStartingUp);
+        privateContext->triggerEvent(doSystemOn);
     });
 
     slEmergency.setLevelAction([&](SafetyContext *privateContext){

@@ -2,8 +2,8 @@
 
 ControlSystem::ControlSystem(double dt)
     : myConstant(1.0), myGain(2.0),
-      servoEncoder("Serv_enc1"),
-      servoMotor("ServMotor1"),
+      servoEncoder("quat1"),
+      servoMotor("servo1"),
       timedomain("Main time domain", dt, true)
 {
     // Name all blocks

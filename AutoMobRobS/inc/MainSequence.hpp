@@ -19,16 +19,18 @@ public:
           sp(sp),
           cs(cs),
 
-          sleep("Sleep", this)
+          sleep("Sleep1", this)
     {
         log.info() << "Sequence created: " << name;
     }
 
     int action()
     {
+        log.info() << "in action";
         while (eeros::sequencer::Sequencer::running)
         {
             sleep(1.0);
+            log.info() <<cs.myConstant.getOut().getSignal();
             log.info() << cs.myGain.getOut().getSignal();
         }
         return 0;
